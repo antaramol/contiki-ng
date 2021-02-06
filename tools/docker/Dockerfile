@@ -164,6 +164,13 @@ RUN pip3 -q install adafruit-nrfutil
 # Set user for what comes next
 USER user
 
+# Environment variables required for nRF52840 (UTF because ASCII python3 error)
+ENV                     LC_ALL=C.UTF-8
+ENV                     LANG=C.UTF-8
+ENV                     TARGET="nrf52840"
+ENV                     BOARD="dongle"
+ENV                     PORT="/dev/ttyACM0"
+
 # Get the Makerdiary UF2 to Open Bootloader firmware
 RUN wget -nv https://github.com/makerdiary/nrf52840-mdk-usb-dongle/raw/master/firmware/open_bootloader/nrf52840_mdk_usb_dongle_open_bootloader_v1.2.0.uf2.zip
 
