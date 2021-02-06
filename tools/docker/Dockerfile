@@ -159,8 +159,13 @@ RUN wget -nv https://www.nordicsemi.com/-/media/Software-and-other-downloads/Des
 
 # Install nRF utils (nrfutil for contiki, adafruit for Makerdiary dongle reflash)
 RUN python2 -m pip install nrfutil
+RUN pip3 -q install adafruit-nrfutil
+
 # Set user for what comes next
 USER user
+
+# Get the Makerdiary UF2 to Open Bootloader firmware
+RUN wget -nv https://github.com/makerdiary/nrf52840-mdk-usb-dongle/raw/master/firmware/open_bootloader/nrf52840_mdk_usb_dongle_open_bootloader_v1.2.0.uf2.zip
 
 # Working directory
 WORKDIR ${CONTIKI_NG}
