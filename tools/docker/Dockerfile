@@ -149,6 +149,16 @@ RUN apt-get -qq -y --no-install-recommends install \
     > /dev/null \
   && apt-get -qq clean
 
+# Install JLink and nRF command-line tools
+RUN wget -nv https://www.nordicsemi.com/-/media/Software-and-other-downloads/Desktop-software/nRF-command-line-tools/sw/Versions-10-x-x/10-12-1/nRFCommandLineTools10121Linuxi386.tar.gz && \
+    mkdir /tmp/nrfclt && \
+    tar xvfz nRFCommandLineTools*.tar.gz -C /tmp/nrfclt && \
+    dpkg -i /tmp/nrfclt/JLink_Linux*.deb  && \
+    dpkg -i /tmp/nrfclt/nRF-Command-Line-Tools*.deb  && \
+    rm -rfv nRFCommandLineTools*.tar.gz /tmp/nrfclt
+
+# Install nRF utils (nrfutil for contiki, adafruit for Makerdiary dongle reflash)
+RUN python2 -m pip install nrfutil
 # Set user for what comes next
 USER user
 
