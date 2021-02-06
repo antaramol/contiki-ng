@@ -136,6 +136,22 @@ ENV PATH="${HOME}/renode:${PATH}"
 #RUN git clone --recursive https://github.com/contiki-ng/contiki-ng.git ${CONTIKI_NG}
 #RUN ant -q -f ${CONTIKI_NG}/tools/cooja/build.xml jar
 
+# Set user for what comes next
+USER root
+
+# Add some utils to help development and debug
+RUN apt-get -qq -y --no-install-recommends install \
+    strace \
+    usbutils \
+    udev \
+    nano \
+    picocom \
+    > /dev/null \
+  && apt-get -qq clean
+
+# Set user for what comes next
+USER user
+
 # Working directory
 WORKDIR ${CONTIKI_NG}
 
