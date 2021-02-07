@@ -159,7 +159,7 @@ RUN wget -nv https://www.nordicsemi.com/-/media/Software-and-other-downloads/Des
 
 # Install nRF utils (nrfutil for contiki, adafruit for Makerdiary dongle reflash)
 RUN python2 -m pip install nrfutil
-RUN pip3 -q install adafruit-nrfutil
+RUN python3 -m pip install setuptools && python3 -m pip install adafruit-nrfutil
 
 # Set user for what comes next
 USER user
