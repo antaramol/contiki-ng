@@ -8,6 +8,7 @@
 
 - [Página oficial del dongle](https://wiki.makerdiary.com/nrf52840-mdk-usb-dongle/)
 - [Cómo programarlo](https://wiki.makerdiary.com/nrf52840-mdk-usb-dongle/programming/)
+- [Open-Bootloader](https://github.com/makerdiary/nrf52840-mdk-usb-dongle/tree/master/firmware/open_bootloader)
 - [Ficheros de Hardware](../asset/makerdiary-dongle_hardware-files_1.0.0.zip)
 
 ### Pinout
