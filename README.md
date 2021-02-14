@@ -155,4 +155,5 @@ Si se recibe la cadena de texto `Hello, world` de forma periódica es que todo h
 ## Información extra
 
 - [README.md original de Contiki-NG](README.original.md)
+- [Información de los dongles nRF52840 usados para las prácticas](doc/es/dongles-info.md)
 - Modificaciones sobre el repositorio original [enlace](doc/es/repository-info-n-mods.md)
