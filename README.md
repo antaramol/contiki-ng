@@ -4,6 +4,36 @@ Este repositorio es una replica del original con las modificaciones necesarias p
 
 Se incluye una carpeta [`doc`](doc) con información referente a las prácticas o a las placas usadas.
 
+## Preparación del entorno de desarrollo local
+
+El entorno de desarrollo estará contenido en una imagen/contenedor de [Docker](https://www.docker.com/). Esto permitirá que se parta de un entorno pre-fijado y controlado, evitando por tanto errores entre versiones o instalaciones innecesarias.
+
+### Maquina virtual
+
+Contiki-NG, en sus versiones mas recientes, proporciona un entorno de desarrollo completo y testeado por sus desarrolladores en formato Docker. Esto evita la necesidad de instalar la mayoría del software, ademas de eliminar problemas de versiones, como ya se vio anteriormente.
+
+Muy resumidamente, Docker es un sistema de virtualización que permite arrancar lo que se llaman *contenedores*. Dentro de estos contenedores se ejecutará generalmente un Linux extremadamente reducido, con los paquetes y programas necesarios para hacer una tarea concreta.
+
+Debido a limitaciones de Windows y el uso de USB, no es posible desarrollar la practica completa usando solo Windows y Docker: Se pueden compilar programas para la placa, pero no se pueden flashear/subir a la placa por dichos problemas con los puertos USB.
+
+Este problema recurrente en Windows se salva mediante máquinas virtuales con Linux instalado, como se ha podido comprobar en diferentes situaciones. Para este caso, se usará la versión de Ubuntu con escritorio y ligera `Lubuntu 20.04`, que se proporcionará con todo lo necesario para arrancar la práctica.
+
+### Entorno virtual
+
+Lo explicado en el punto anterior indica el uso de 2 sistemas diferentes de virtualizacion: Maquina virtual y Docker. Esto puede generar confusión si no se ejecutan ciertos comandos dentro del entorno adecuado, pero es extremadamente sencillo una vez se entiende estos detalles.
+
+Las diferentes capas, por tanto quedan algo como:
+
+1. El sistema operativo principal actuará como sistema anfitrión, por lo general Windows, donde se ejecutará una maquina virtual. Si se necesita intercambiar ficheros entre el ordenador y la maquina virtual, se recomienda hacerlo mediante el uso de carpetas compartidas (en la propia configuración de la maquina virtual).
+2. Una vez arrancada la maquina virtual, habrá partes que sean gráficas y otras que requieran del uso de la consola o terminal. El icono para abrirla se encuentra tanto en los menus, como en la barra de inicio, al lado del icono de Firefox.
+3. Dentro de esta consola, al ejecutar `contiker` se accederá a la consola 'final', donde reside todo el entorno de desarrollo de Contiki junto a todo lo necesario para programar la placa de NRF52840. *Este comando puede fallar si no se ha clonado correctamente el repositorio*
+
+### Instalación en Windows. VirtualBox
+
+En el documento '[Preparación de la maquina virtual: VirtualBox](doc/es/prepare-vm_virtualbox.md)' se explica paso a paso el proceso de creación de la máquina virtual.
+
+Una vez se sigan los pasos, y quede terminado el bloque, es posible continuar al clonado (descarga) del repositorio.
+
 ## Preparación de la carpeta de trabajo
 
 ### Crear grupo personal en Gitlab
@@ -38,39 +68,9 @@ La pantalla siguiente mostrará los posibles emplazamientos donde GitLab permite
 
 Cada persona debe tener ya su repositorio personal: Este contiene todo el código de Contiki necesario para las prácticas, aunque por ahora está solo en Gitlab.
 
-Para poder trabajar con él es necesario clonarlo, paso que se podrá hacer una vez se tenga configurado el entorno de desarrollo, que veremos a continuación.
+Para poder trabajar con él es necesario clonarlo en el entorno de desarrollo como sigue.
 
-## Preparación del entorno de desarrollo local
-
-El entorno de desarrollo estará contenido en una imagen/contenedor de [Docker](https://www.docker.com/). Esto permitirá que se parta de un entorno pre-fijado y controlado, evitando por tanto errores entre versiones o instalaciones innecesarias.
-
-### Maquina virtual
-
-Contiki-NG, en sus versiones mas recientes, proporciona un entorno de desarrollo completo y testeado por sus desarrolladores en formato Docker. Esto evita la necesidad de instalar la mayoría del software, ademas de eliminar problemas de versiones, como ya se vio anteriormente.
-
-Muy resumidamente, Docker es un sistema de virtualización que permite arrancar lo que se llaman *contenedores*. Dentro de estos contenedores se ejecutará generalmente un Linux extremadamente reducido, con los paquetes y programas necesarios para hacer una tarea concreta.
-
-Debido a limitaciones de Windows y el uso de USB, no es posible desarrollar la practica completa usando solo Windows y Docker: Se pueden compilar programas para la placa, pero no se pueden flashear/subir a la placa por dichos problemas con los puertos USB.
-
-Este problema recurrente en Windows se salva mediante máquinas virtuales con Linux instalado, como se ha podido comprobar en diferentes situaciones. Para este caso, se usará la versión de Ubuntu con escritorio y ligera `Lubuntu 20.04`, que se proporcionará con todo lo necesario para arrancar la práctica.
-
-### Entorno virtual
-
-Lo explicado en el punto anterior indica el uso de 2 sistemas diferentes de virtualizacion: Maquina virtual y Docker. Esto puede generar confusión si no se ejecutan ciertos comandos dentro del entorno adecuado, pero es extremadamente sencillo una vez se entiende estos detalles.
-
-Las diferentes capas, por tanto quedan algo como:
-
-1. El sistema operativo principal actuará como sistema anfitrión, por lo general Windows, donde se ejecutará una maquina virtual. Si se necesita intercambiar ficheros entre el ordenador y la maquina virtual, se recomienda hacerlo mediante el uso de carpetas compartidas (en la propia configuración de la maquina virtual).
-2. Una vez arrancada la maquina virtual, habrá partes que sean gráficas y otras que requieran del uso de la consola o terminal. El icono para abrirla se encuentra tanto en los menus, como en la barra de inicio, al lado del icono de Firefox.
-3. Dentro de esta consola, al ejecutar `contiker` se accederá a la consola 'final', donde reside todo el entorno de desarrollo de Contiki junto a todo lo necesario para programar la placa de NRF52840. *Este comando puede fallar si no se ha clonado correctamente el repositorio*
-
-### Instalación en Windows. VirtualBox
-
-En el documento '[Preparación de la maquina virtual: VirtualBox](doc/es/prepare-vm_virtualbox.md)' se explica paso a paso el proceso de creación de la máquina virtual.
-
-Una vez se sigan los pasos, y quede terminado el bloque, es posible continuar al clonado (descarga) del repositorio.
-
-### Clonado del repositorio en el entorno de desarrollo
+## Clonado del repositorio en el entorno de desarrollo
 
 A partir de ahora todo el trabajo se hará en la propia máquina virtual y, solo cuando sea necesario, se indicará atender a algo que esté fuera de esta (como las conexiones USB, que se deben habilitar desde VirtualBox).
 
@@ -93,7 +93,7 @@ git submodule update --init --recursive
 
 Una vez terminado el proceso se puede pasar a comprobar la programación, mediante el test inicial.
 
-### Test inicial: `Hello World`
+## Test inicial: `Hello World`
 
 Dentro de una consola se ejecuta el comando `contiker`, que abrirá una sesión con el entorno virtual de Contiki-NG bajo Docker, viendose algo similar a:
 
