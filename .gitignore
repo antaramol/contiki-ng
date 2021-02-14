@@ -2,10 +2,10 @@
 *.bin
 *.hex
 *.map
-*.png
+#*.png
 *.log
 *.elf
-*.zip
+#*.zip
 *.d
 *.o
 *.e
