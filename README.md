@@ -4,6 +4,14 @@ Este repositorio es una replica del original con las modificaciones necesarias p
 
 Se incluye una carpeta [`doc`](doc) con información referente a las prácticas o a las placas usadas.
 
+## Documentacion extra o para consulta
+
+- [Preparación de la maquina virtual: VirtualBox](doc/es/prepare-vm_virtualbox.md)
+- [Comandos de `git` para las prácticas](doc/es/git-cheatsheet.md)
+- [Información de los dongles nRF52840 usados para las prácticas](doc/es/dongles-info.md)
+- [Modificaciones sobre el repositorio original](doc/es/repository-info-n-mods.md)
+- [README.md original de Contiki-NG, sin modificar](README.original.md)
+
 ## Preparación del entorno de desarrollo local
 
 El entorno de desarrollo estará contenido en una imagen/contenedor de [Docker](https://www.docker.com/). Esto permitirá que se parta de un entorno pre-fijado y controlado, evitando por tanto errores entre versiones o instalaciones innecesarias.
@@ -151,9 +159,3 @@ picocom -fh -b 115200 --imap lfcrlf /dev/ttyACM0
 ```
 
 Si se recibe la cadena de texto `Hello, world` de forma periódica es que todo ha ido bien. Para salir de picocom se debe presionar `Ctrl + a` y luego `Ctrl + x` (sin soltar la tecla `Ctrl` es mas cómodo).
-
-## Información extra
-
-- [README.md original de Contiki-NG](README.original.md)
-- [Información de los dongles nRF52840 usados para las prácticas](doc/es/dongles-info.md)
-- Modificaciones sobre el repositorio original [enlace](doc/es/repository-info-n-mods.md)
