@@ -35,8 +35,8 @@ PROCESS_THREAD(leer_temperatura, ev, data)
   
   while(1) {
     SENSORS_ACTIVATE(temperature_sensor);
-    valor = temperature_sensor.value(0);
-    printf("temperatura = %d",valor);
+    valor = (int) temperature_sensor.value(0)/4;
+    printf("temperatura = %d\n",valor);
     SENSORS_DEACTIVATE(temperature_sensor);
     PROCESS_WAIT_EVENT();
   }
