@@ -29,14 +29,18 @@ PROCESS_THREAD(leer_temperatura, ev, data)
 {
 
   PROCESS_BEGIN();
-  static int valor = 0;
+  static float valor = 0;
+  static int valor_entero, valor_dec = 0;
+
   PROCESS_WAIT_EVENT();
 
   
   while(1) {
     SENSORS_ACTIVATE(temperature_sensor);
-    valor = (int) temperature_sensor.value(0)/4;
-    printf("temperatura = %d\n",valor);
+    valor = temperature_sensor.value(0)/4.0;
+    valor_entero = (int)valor;
+    valor_dec = (int)((valor - valor_entero)*100.0);
+    printf("%d.%d\n",valor_entero,valor_dec);
     SENSORS_DEACTIVATE(temperature_sensor);
     PROCESS_WAIT_EVENT();
   }
