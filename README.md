@@ -1,4 +1,4 @@
-# Contiki-NG para practicas de RIS
+# Contiki-NG para practicas de RIS PRUEBA
 Este repositorio es una replica del original con las modificaciones necesarias para soportar los dongles basados en NRF52840 (versiones Nordicsemi y Makerdiary).
 
 Se incluye una carpeta [`doc`](doc) con información referente a las prácticas o a las placas usadas.
