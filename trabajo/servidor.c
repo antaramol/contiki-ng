@@ -69,13 +69,17 @@ udp_rx_callback(struct simple_udp_connection *c,
 
   //static uint8_t temp_medida;//, temp_dec;
   static char str[10];
+  static uint8_t temp_medida = 0;
 
-  temp_actual = 10*(data[0]-48)+(data[1]-48);
-  //temp_dec = 10*(data[3]-48)+(data[4]-48);
+
+  temp_medida = 10*(data[0]-48)+(data[1]-48);
+  if (temp_medida != 99){
+    temp_actual = temp_medida;
+  }
   
   printf("Temperatura actual = %d ºC\n",temp_actual);
   
-  sprintf(str,"%d,%d",temp_actual,potencia);
+  sprintf(str,"%d",potencia);
 
 #if WITH_SERVER_REPLY
   /* send back the same string to the client as an echo reply */
@@ -115,7 +119,7 @@ PROCESS_THREAD(calculo_potencia, ev, data)
     printf("Diff: %d\n",diff);
     
     if (diff == 0){
-      potencia = 7;
+      potencia = 0;
     }else if(diff >= 0){
       if(diff <3){
         potencia = 4;

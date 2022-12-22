@@ -14,14 +14,16 @@
 #define WITH_SERVER_REPLY  1
 #define UDP_CLIENT_PORT	8765
 #define UDP_SERVER_PORT	5678
+#define TEMP_AMBIENTE 25
+#define TEMP_MIN 10
+#define TEMP_MAX 35
 
 #define SEND_INTERVAL		  (5 * CLOCK_SECOND)   //Variable que envia mensajes cada segundo.
 
 static struct simple_udp_connection udp_conn;
-uint8_t Potencia;
-uint8_t temp_ant=20;
-uint8_t temp_min=10;
-uint8_t temp_max=35;
+uint8_t potencia;
+uint8_t temp_actual;
+uint8_t temp_ant = TEMP_AMBIENTE;
 
 /*---------------------------------------------------------------------------*/
 PROCESS(udp_client_process, "UDP client");
@@ -40,8 +42,8 @@ udp_rx_callback(struct simple_udp_connection *c,
   //printf("La potencia del nodo servidor es '%.*s'\n", datalen, (char *) data);
   
   //Consigo la potencia:
-  Potencia=data[3];
-  //printf("Potencia: %d\n",Potencia);
+  potencia=data[0]-48;
+  //printf("potencia: %d\n",potencia);
   //LOG_INFO_6ADDR(sender_addr);
 #if LLSEC802154_CONF_ENABLED
   LOG_INFO_(" LLSEC LV:%d", uipbuf_get_attr(UIPBUF_ATTR_LLSEC_LEVEL));
@@ -56,7 +58,6 @@ PROCESS_THREAD(udp_client_process, ev, data)
   static unsigned count;
   static char str[32];
   uip_ipaddr_t dest_ipaddr;
-  uint8_t rec_pot;
   PROCESS_BEGIN();
 
   /* Initialize UDP connection */
@@ -69,33 +70,34 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
     if(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&dest_ipaddr)) {
       /* Send to DAG root */
-      	rec_pot=Potencia-48;
       	
-		printf("POTENCIA REC = %d\n",rec_pot);
-		//Enfria si Potencia es igual a 1,2 o 3...
-		if(rec_pot==1 || rec_pot==2 || rec_pot==3){
+		printf("Potencia REC = %d\n",potencia);
+		//Enfria si potencia es igual a 1,2 o 3...
+		if(1 <= potencia && potencia <= 3){
 		
-		  temp_ant=temp_ant-(4-rec_pot);
+		  temp_actual=temp_ant-(4-potencia);
 		
-		} else if(rec_pot==4 || rec_pot==5 || rec_pot==6){ //Calienta si Potencia es igual a 4,5 o 6...
+		} else if(4 <= potencia && potencia <= 6){ //Calienta si potencia es igual a 4,5 o 6...
 		
-		  temp_ant=temp_ant+(rec_pot-3);
+		  temp_ant=temp_ant+(potencia-3);
 		
 		}
+
+    temp_ant = temp_actual;
 		
-		if(temp_ant<temp_min){
+		/*if(temp_ant<temp_min){
 		temp_ant=temp_min;
 		}
 		else if(temp_ant>temp_max){
 		temp_ant=temp_max;
-		}
+		}*/
 		
-      int ent=temp_ant;
+      //int ent=temp_ant;
       //float frac= temp_ant-ent;
       //int dec=(frac*100);
       //printf("ent: %d, dec: %d\n",ent,dec);
-      printf("\nEnviando temperatura actualizada al servidor = %d ºC\n",ent);
-      sprintf(str, "%d", temp_ant);
+      printf("\nEnviando temperatura actualizada al servidor = %d ºC\n",temp_actual);
+      sprintf(str, "%d", temp_actual);
       //printf("%s",str);
       simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
 
@@ -112,4 +114,3 @@ PROCESS_THREAD(udp_client_process, ev, data)
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
-
