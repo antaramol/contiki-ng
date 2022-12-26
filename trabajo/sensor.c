@@ -22,7 +22,7 @@
 
 static struct simple_udp_connection udp_conn;
 uint8_t potencia;
-uint8_t temp_actual;
+uint8_t temp_actual = TEMP_AMBIENTE;
 uint8_t temp_ant = TEMP_AMBIENTE;
 
 /*---------------------------------------------------------------------------*/
@@ -79,9 +79,12 @@ PROCESS_THREAD(udp_client_process, ev, data)
 		
 		} else if(4 <= potencia && potencia <= 6){ //Calienta si potencia es igual a 4,5 o 6...
 		
-		  temp_ant=temp_ant+(potencia-3);
+		  temp_actual=temp_ant+(potencia-3);
 		
-		}
+		} else if (potencia == 0){
+      //printf("Temp actual = %d ºC",temp_actual);
+      ;
+    }
 
     temp_ant = temp_actual;
 		

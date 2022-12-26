@@ -77,7 +77,7 @@ udp_rx_callback(struct simple_udp_connection *c,
     temp_actual = temp_medida;
   }
   
-  printf("Temperatura actual = %d ºC\n",temp_actual);
+  //printf("Temperatura actual = %d ºC\n",temp_actual);
   
   sprintf(str,"%d",potencia);
 
@@ -116,7 +116,7 @@ PROCESS_THREAD(calculo_potencia, ev, data)
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer1));
     
     diff = temp_deseada-temp_actual;
-    printf("Diff: %d\n",diff);
+    //printf("Diff: %d\n",diff);
     
     if (diff == 0){
       potencia = 0;
@@ -136,7 +136,7 @@ PROCESS_THREAD(calculo_potencia, ev, data)
       potencia = 1;
     }
     
-    printf("Potencia: %d\n",potencia);
+    printf("%d,%d,%d\n",potencia,temp_actual,temp_deseada);
 
 
   }
@@ -153,11 +153,11 @@ PROCESS_THREAD(accion_usuario, ev, data){
   
   while (1){
 
-    etimer_set(&timer1, CLOCK_SECOND*40); //Ajustar esto
+    etimer_set(&timer1, CLOCK_SECOND*120); //Ajustar esto
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer1));
 
     temp_deseada=TEMP_AMBIENTE + rand()%18 - 9; 
-    printf("Temperatura deseada: %d ºC\n",temp_deseada);
+    //printf("Temperatura deseada: %d ºC\n",temp_deseada);
 
   }
 
