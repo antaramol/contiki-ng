@@ -46,13 +46,14 @@
 static struct simple_udp_connection udp_conn;
 
 static uint8_t temp_actual=TEMP_AMBIENTE; //Definicion de la temperatura inicial.
-static uint8_t potencia;
+static uint8_t potencia = 4;
+static int8_t diff = 0;
 static uint8_t temp_deseada=TEMP_AMBIENTE;
 
 PROCESS(udp_server_process, "UDP server");
-PROCESS(calculo_potencia, "Power");
+//PROCESS(calculo_potencia, "Power");
 PROCESS(accion_usuario, "Cambiar temperatura");
-AUTOSTART_PROCESSES(&udp_server_process,&calculo_potencia,&accion_usuario);
+AUTOSTART_PROCESSES(&udp_server_process,&accion_usuario);
 /*---------------------------------------------------------------------------*/
 static void
 udp_rx_callback(struct simple_udp_connection *c,
@@ -76,16 +77,39 @@ udp_rx_callback(struct simple_udp_connection *c,
   if (temp_medida != 99){
     temp_actual = temp_medida;
   }
+
+  diff = temp_deseada-temp_actual;
+  //printf("Diff: %d\n",diff);
+    
+  if (diff == 0){
+    potencia = 4;
+  }else if(diff >= 0){
+    if(diff <3){
+      potencia = 5;
+    }else if(diff<7){
+      potencia = 6;
+    }else{
+      potencia = 7;
+    }
+  }else if(diff>-3){
+    potencia = 3;
+  }else if(diff>-7){
+    potencia = 2;
+  }else{
+    potencia = 1;
+  }
+    
+  printf("%d,%d,%d\n",potencia,temp_actual,temp_deseada);
   
   //printf("Temperatura actual = %d ºC\n",temp_actual);
   
   sprintf(str,"%d",potencia);
 
-#if WITH_SERVER_REPLY
-  /* send back the same string to the client as an echo reply */
-  //LOG_INFO("Sending response.\n");
-  simple_udp_sendto(&udp_conn, str, strlen(str), sender_addr);
-#endif /* WITH_SERVER_REPLY */
+  #if WITH_SERVER_REPLY
+    /* send back the same string to the client as an echo reply */
+    //LOG_INFO("Sending response.\n");
+    simple_udp_sendto(&udp_conn, str, strlen(str), sender_addr);
+  #endif /* WITH_SERVER_REPLY */
 }
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(udp_server_process, ev, data)
@@ -103,46 +127,6 @@ PROCESS_THREAD(udp_server_process, ev, data)
 }
 /*---------------------------------------------------------------------------*/
 
-PROCESS_THREAD(calculo_potencia, ev, data)
-{
-  static struct etimer timer1;
-  static int8_t diff = 0;
-
-  PROCESS_BEGIN();
-  
-  while(1){
-    
-    etimer_set(&timer1, CLOCK_SECOND*2); //Ajustar esto
-    PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer1));
-    
-    diff = temp_deseada-temp_actual;
-    //printf("Diff: %d\n",diff);
-    
-    if (diff == 0){
-      potencia = 0;
-    }else if(diff >= 0){
-      if(diff <3){
-        potencia = 4;
-      }else if(diff<7){
-        potencia = 5;
-      }else{
-        potencia = 6;
-      }
-    }else if(diff>-3){
-      potencia = 3;
-    }else if(diff>-7){
-      potencia = 2;
-    }else{
-      potencia = 1;
-    }
-    
-    printf("%d,%d,%d\n",potencia,temp_actual,temp_deseada);
-
-
-  }
-
-  PROCESS_END();
-}
 /*---------------------------------------------------------------------------*/
 
 PROCESS_THREAD(accion_usuario, ev, data){
@@ -153,7 +137,9 @@ PROCESS_THREAD(accion_usuario, ev, data){
   
   while (1){
 
-    etimer_set(&timer1, CLOCK_SECOND*120); //Ajustar esto
+    etimer_set(&timer1, CLOCK_SECOND*300); //Para prueba real
+    //etimer_set(&timer1, CLOCK_SECOND*10); //Prueba rapida
+
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer1));
 
     temp_deseada=TEMP_AMBIENTE + rand()%18 - 9; 

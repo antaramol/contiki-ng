@@ -18,7 +18,8 @@
 #define TEMP_MIN 10
 #define TEMP_MAX 35
 
-#define SEND_INTERVAL		  (5 * CLOCK_SECOND)   //Variable que envia mensajes cada segundo.
+#define SEND_INTERVAL		  (15 * CLOCK_SECOND)   //Prueba real
+//#define SEND_INTERVAL (5 * CLOCK_SECOND) //Prueba rapida
 
 static struct simple_udp_connection udp_conn;
 uint8_t potencia;
@@ -71,38 +72,26 @@ PROCESS_THREAD(udp_client_process, ev, data)
     if(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&dest_ipaddr)) {
       /* Send to DAG root */
       	
-		printf("Potencia REC = %d\n",potencia);
+		printf("Potencia recibida anteriormente = %d\n",potencia);
 		//Enfria si potencia es igual a 1,2 o 3...
 		if(1 <= potencia && potencia <= 3){
 		
 		  temp_actual=temp_ant-(4-potencia);
 		
-		} else if(4 <= potencia && potencia <= 6){ //Calienta si potencia es igual a 4,5 o 6...
+		} else if(5 <= potencia && potencia <= 7){ //Calienta si potencia es igual a 4,5 o 6...
 		
-		  temp_actual=temp_ant+(potencia-3);
+		  temp_actual=temp_ant+(potencia-4);
 		
-		} else if (potencia == 0){
-      //printf("Temp actual = %d ºC",temp_actual);
+		} else if (potencia == 4){
       ;
     }
 
     temp_ant = temp_actual;
 		
-		/*if(temp_ant<temp_min){
-		temp_ant=temp_min;
-		}
-		else if(temp_ant>temp_max){
-		temp_ant=temp_max;
-		}*/
-		
-      //int ent=temp_ant;
-      //float frac= temp_ant-ent;
-      //int dec=(frac*100);
-      //printf("ent: %d, dec: %d\n",ent,dec);
-      printf("\nEnviando temperatura actualizada al servidor = %d ºC\n",temp_actual);
-      sprintf(str, "%d", temp_actual);
-      //printf("%s",str);
-      simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
+	  printf("Enviando temperatura actualizada al servidor = %d ºC\n\n",temp_actual);
+    sprintf(str, "%d", temp_actual);
+    //printf("%s",str);
+    simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
 
       count++;
     } else {

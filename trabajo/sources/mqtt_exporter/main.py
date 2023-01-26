@@ -169,7 +169,7 @@ def main():
         line = ser.readline()
         LOG.debug("Serial Data: %s", str(line, 'ascii').rstrip())
 
-        ser_pot=int(line.rstrip()[0]) - 48
+        ser_pot=int(int(line.rstrip()[0]) - 48)
         temp_act=10*(int(line.rstrip()[2]) - 48)+ int(line.rstrip()[3]) - 48
         temp_des=10*(int(line.rstrip()[5]) - 48)+ int(line.rstrip()[6]) - 48
         print(ser_pot)

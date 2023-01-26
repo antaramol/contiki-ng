@@ -18,10 +18,10 @@
 #define UDP_CLIENT_PORT	8765
 #define UDP_SERVER_PORT	5678
 
-#define SEND_INTERVAL		  (5 * CLOCK_SECOND)   //Variable que envia mensajes cada segundo.
-
+#define SEND_INTERVAL		  (15 * CLOCK_SECOND)   //Prueba real
+//#define SEND_INTERVAL		  (5 * CLOCK_SECOND)   //Prueba rapida
 static struct simple_udp_connection udp_conn;
-uint8_t potencia;
+uint8_t potencia = 4;
 uint8_t temp_ant=20;
 uint8_t temp_min=10;
 uint8_t temp_max=35;
@@ -45,7 +45,8 @@ udp_rx_callback(struct simple_udp_connection *c,
   
   //Consigo la potencia:
   potencia=data[0]-48;
-  //printf("potencia: %d\n",potencia);
+  printf("Potencia recibida = %d\n",potencia);
+  
   //LOG_INFO_6ADDR(sender_addr);
 #if LLSEC802154_CONF_ENABLED
   LOG_INFO_(" LLSEC LV:%d", uipbuf_get_attr(UIPBUF_ATTR_LLSEC_LEVEL));
@@ -73,13 +74,11 @@ PROCESS_THREAD(udp_client_process, ev, data)
     if(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&dest_ipaddr)) {
       /* Send to DAG root */
       	
-	    printf("Potencia REC = %d\n",potencia);
+	    sprintf(str, "99");
+      //printf("%s",str);
+      simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
 
-        sprintf(str, "99");
-        //printf("%s",str);
-        simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
-
-        count++;
+      count++;
     } else {
       printf("Not reachable yet\n");
     }
@@ -110,40 +109,46 @@ PROCESS_THREAD(parpadeo_process, ev, data)
   while (1){
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer1));
     //printf("Potencia?\n");
-    if (potencia != 0){
+    if (potencia != 4){
         if(1 <= potencia && potencia <= 3){
-            printf("Ponemos el led a azul\n");
+            printf("Ponemos el led a azul, ");
             rgb_led_set(RGB_LED_BLUE);
             switch(potencia){
                 case 1:
+                    printf("velocidad rapida\n");
                     etimer_set(&timer1, CLOCK_SECOND*0.25);
                     break;
                 case 2:
+                    printf("velocidad media\n");
                     etimer_set(&timer1, CLOCK_SECOND*0.5);
                     break;
                 case 3:
+                    printf("velocidad lenta\n");
                     etimer_set(&timer1, CLOCK_SECOND);
                     break;
             }
             	
-		} else if(4 <= potencia && potencia <= 6){
-            printf("Ponemos el red a rojo\n");
-            rgb_led_set(RGB_LED_RED);
-            switch (potencia) {
-                case 4:
-                    etimer_set(&timer1, CLOCK_SECOND);
-                    break;
-                case 5:
-                    etimer_set(&timer1, CLOCK_SECOND*0.5);
-                    break;
-                case 6:
-                    etimer_set(&timer1, CLOCK_SECOND*0.25);
-                    break;
-            }
+		  } else if(5 <= potencia && potencia <= 7){
+              printf("Ponemos el red a rojo, ");
+              rgb_led_set(RGB_LED_RED);
+              switch (potencia) {
+                  case 5:
+                      printf("velocidad lenta\n");
+                      etimer_set(&timer1, CLOCK_SECOND);
+                      break;
+                  case 6:
+                      printf("velocidad media\n");
+                      etimer_set(&timer1, CLOCK_SECOND*0.5);
+                      break;
+                  case 7:
+                      printf("velocidad rapida\n");
+                      etimer_set(&timer1, CLOCK_SECOND*0.25);
+                      break;
+              }
             
-		}
-        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer1));
-        etimer_reset(&timer1);
+		  }
+      PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer1));
+      etimer_reset(&timer1);
     }else{
         printf("Led apagado\n");
         etimer_set(&timer1, CLOCK_SECOND);
