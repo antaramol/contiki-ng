@@ -19,3 +19,6 @@
 [submodule "arch/cpu/nrf52840/lib/nrf52-sdk"]
 	path = arch/cpu/nrf52840/lib/nrf52-sdk
 	url = https://github.com/contiki-ng/nrf-sdk-contiki-ng.git
+[submodule "tools/cooja"]
+	path = tools/cooja
+	url = https://github.com/contiki-ng/cooja.git
