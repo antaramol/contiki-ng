@@ -18,7 +18,9 @@ logging.basicConfig(filename='register.log', level=logging.DEBUG)
 LOG = logging.getLogger("[mqtt-exporter]")
 
 prom_msg_counter = None
-prom_temp_gauge = None
+prom_temp_F_gauge = None
+prom_temp_C_gauge = None
+prom_switch_gauge = None
 
 def create_msg_counter_metrics():
     global prom_msg_counter
@@ -27,11 +29,25 @@ def create_msg_counter_metrics():
         'Number of received messages'
     )
 
-def create_temp_gauge_metrics():
-    global prom_temp_gauge
+def create_temp_F_gauge_metrics():
+    global prom_temp_F_gauge
 
-    prom_temp_gauge = Gauge( 'temp',
-        'Temperature [Celsius Degrees]'
+    prom_temp_F_gauge = Gauge( 'temp_F',
+        'Temperature [Fahrenheit]'
+    )
+
+def create_temp_C_gauge_metrics():
+    global prom_temp_C_gauge
+
+    prom_temp_C_gauge = Gauge( 'temp_C',
+        'Temperature [Celsius]'
+    )
+
+def create_switch_gauge_metrics():
+    global prom_switch_gauge
+
+    prom_switch_gauge = Gauge( 'switch',
+        'Switch [On/Off]'
     )
 
 def parse_message(raw_topic, raw_payload):
@@ -76,7 +92,9 @@ def parse_metrics(data, topic, client_id):
 
 def on_connect(client, _, __, rc):
     LOG.info(" Connected with result code: %s", rc)
-    client.subscribe("Temp")
+    client.subscribe("temp_F")
+    client.subscribe("temp_C")
+    client.subscribe("switch")
     if rc != mqtt.CONNACK_ACCEPTED:
         LOG.error("[ERROR]: MQTT %s", rc)
 
@@ -87,12 +105,18 @@ def on_message(_, userdata, msg):
     LOG.debug(" \t Topic: %s", topic)
     LOG.debug(" \t Payload: %s", payload)
 
-    if not topic or not payload:
+    if not topic or not str(payload):
         LOG.error(" [ERROR]: Topic or Payload not found")
         return
 
     prom_msg_counter.inc()
-    prom_temp_gauge.set(payload)
+    if(topic == "temp_F"):
+        prom_temp_F_gauge.set(payload)
+    elif(topic == "temp_C"):
+        prom_temp_C_gauge.set(payload)
+    elif(topic == "switch"):
+        prom_switch_gauge.set(payload)
+
 
 def main():
     # Create MQTT client
@@ -122,7 +146,9 @@ def main():
 
     # Create Prometheus metrics
     create_msg_counter_metrics()
-    create_temp_gauge_metrics()
+    create_temp_F_gauge_metrics()
+    create_temp_C_gauge_metrics()
+    create_switch_gauge_metrics()
     # Start prometheus server
     start_http_server(9000)
 
@@ -143,9 +169,14 @@ def main():
         line = ser.readline()
         LOG.debug("Serial Data: %s", str(line, 'ascii').rstrip())
 
-        ser_temp=float(line.rstrip())
-        print(ser_temp)
-        client.publish(topic="Temp", payload=ser_temp, qos=0, retain=False)
+        
+        temp_C = float(line.rstrip()[0:5])
+        temp_F = temp_C*9/5+32
+        boton = int(line.rstrip()[6]) - 48
+        LOG.info(temp_C)
+        client.publish(topic="temp_F", payload=temp_F, qos=0, retain=False)
+        client.publish(topic="temp_C", payload=temp_C, qos=0, retain=False)
+        client.publish(topic="switch", payload=boton, qos=0, retain=False)
 
 if __name__ == "__main__":
     main()

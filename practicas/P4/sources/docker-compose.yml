@@ -13,14 +13,6 @@ services:
       - 1883:1883
     restart: unless-stopped
 
-  mosquitto-exporter:
-    image: sapcc/mosquitto-exporter
-    environment:
-      - "BROKER_ENDPOINT=tcp://mosquitto:1883"
-      - MQTT_USER=RANDOM_USER
-      - MQTT_PASS=RANDOM_PASSWORD
-    restart: unless-stopped
-
   mqtt-exporter:
     build: ./mqtt_exporter
     network_mode: host
